@@ -107,7 +107,6 @@ library(QuantPsyc) # quantitative psychological analyses
 library(sjmisc)    # missing values
 ```
 
-    ## Learn more about sjmisc with 'browseVignettes("sjmisc")'.
     ## 
     ## Attaching package: 'sjmisc'
     ## 
@@ -184,6 +183,7 @@ library(cowplot)   # save figures in .png file
 library(sjPlot)    # tab_model()
 ```
 
+    ## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!
     ## 
     ## Attaching package: 'sjPlot'
     ## 
@@ -210,7 +210,7 @@ library(sjlabelled)
     ## 
     ##     as_label
 
-#### Load dataset
+### Load dataset
 
 ``` r
 RTdata<-read_excel("RT.xls") 
@@ -340,6 +340,7 @@ plotSRT+geom_signif(comparisons = list(c("S+", "S-")), # add label
     ## Warning: Removed 5 rows containing missing values (`geom_point()`).
 
 ![](R_behavioral_project_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![RT mean](RT.png)
 
 ``` r
 # save
@@ -357,7 +358,7 @@ ggsave("RT.png",
 
     ## Warning: Removed 5 rows containing missing values (`geom_point()`).
 
-#### GLMM
+### GLMM
 
 ``` r
 # check normalization
@@ -367,6 +368,8 @@ ggdensity(RTdata$RT,
 ```
 
 ![](R_behavioral_project_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![normalization](distribution.png)
+
 Positively skewed
 
 ``` r
