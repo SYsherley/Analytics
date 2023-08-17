@@ -383,202 +383,92 @@ Positively skewed
     contrasts(RTdata$G) # Con as reference
     contrasts(RTdata$S) # Rel as reference
 
-``` r
-# model
-glmer_1<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+AcqAsian+OrderofLearning +(S*G|SubjectNr.)+(1|Item),
-                      data= RTdata,family = Gamma(link=identity))# failed
-```
+    # model
+    glmer_1<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+AcqAsian+OrderofLearning +(S*G|SubjectNr.)+(1|Item),
+                          data= RTdata,family = Gamma(link=identity))# failed
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.249159 (tol = 0.002, component 1)
+    rm(glmer_1)
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
+    # remove the Order of Dutch acquisition
+    glmer_2<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+AcqAsian+(S*G|SubjectNr.)+(1|Item),
+                          data= RTdata,family = Gamma(link=identity))
 
-``` r
-rm(glmer_1)
-```
+    ## failed to converge. Model is nearly unidentifiable: very large eigenvalue
+    rm(glmer_2)
 
-``` r
-# remove the Order of Dutch acquisition
-glmer_2<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+AcqAsian+(S*G|SubjectNr.)+(1|Item),
+    # remove the Acquisition of Asian languages
+    glmer_3<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+(S*G|SubjectNr.)+(1|Item), data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_3)
+
+    # remove the Acquisition of Germanic languages
+    glmer_4<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_4)
+
+    # remove the Acquisition of Romance languages
+    glmer_5<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_5)
+
+    # remove the Self-rating score
+    glmer_6<-glmer(RT~S*G+LexTALE+AOA+UseYear+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_6)
+
+    # remove the year of usage
+    glmer_7<-glmer(RT~S*G+LexTALE+AOA+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_7)
+
+    # remove AOA
+    glmer_8<-glmer(RT~S*G+LexTALE+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_8)
+
+    # remove LexTale
+    glmer_9<-glmer(RT~S*G+ (S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
+
+    ## failed to converge. 
+    rm(glmer_9)
+
+    # remove the interaction for S * G by subject
+    glmer_10<-glmer(RT~S*G
+                      +(S+G|SubjectNr.)+(1|Item),
                       data= RTdata,family = Gamma(link=identity))
-```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.468118 (tol = 0.002, component 1)
+    ## singular fit
+    rm(glmer_10)
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
+    # remove the interaction for S * G 
+    glmer_11<-glmer(RT~S+G
+                      +(S+G|SubjectNr.)+(1|Item),
+                      data= RTdata,family = Gamma(link=identity))
 
-``` r
-## failed to converge. Model is nearly unidentifiable: very large eigenvalue
-rm(glmer_2)
-```
+    ## failed to converge
+    rm(glmer_11)
 
-``` r
-# remove the Acquisition of Asian languages
-glmer_3<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+AcqGerm+(S*G|SubjectNr.)+(1|Item), data= RTdata,family = Gamma(link=identity))
-```
+    # remove by-subject G
+    glmer_12<-glmer(RT~S*G
+                      +(S|SubjectNr.)+(1|Item),
+                      data= RTdata,family = Gamma(link=identity))
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.761656 (tol = 0.002, component 1)
+    ## failed to converge
+    rm(glmer_12)
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
+    # remove by-subject S
+    glmer_13<-glmer(RT~S*G
+                      +(G|SubjectNr.)+(1|Item),
+                      data= RTdata,family = Gamma(link=identity))
 
-``` r
-## failed to converge. 
-rm(glmer_3)
-```
-
-``` r
-# remove the Acquisition of Germanic languages
-glmer_4<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+AcqRoman+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.271135 (tol = 0.002, component 1)
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-``` r
-## failed to converge. 
-rm(glmer_4)
-```
-
-``` r
-# remove the Acquisition of Romance languages
-glmer_5<-glmer(RT~S*G+LexTALE+AOA+UseYear+SelfRate+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.0606964 (tol = 0.002, component 1)
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-``` r
-## failed to converge. 
-rm(glmer_5)
-```
-
-``` r
-# remove the Self-rating score
-glmer_6<-glmer(RT~S*G+LexTALE+AOA+UseYear+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.373769 (tol = 0.002, component 1)
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-``` r
-## failed to converge. 
-rm(glmer_6)
-```
-
-``` r
-# remove the year of usage
-glmer_7<-glmer(RT~S*G+LexTALE+AOA+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.179777 (tol = 0.002, component 1)
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-``` r
-## failed to converge. 
-rm(glmer_7)
-```
-
-``` r
-# remove AOA
-glmer_8<-glmer(RT~S*G+LexTALE+(S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.0421336 (tol = 0.002, component 1)
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-``` r
-## failed to converge. 
-rm(glmer_8)
-```
-
-``` r
-# remove LexTale
-glmer_9<-glmer(RT~S*G+ (S*G|SubjectNr.)+(1|Item),data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.0261514 (tol = 0.002, component 1)
-
-``` r
-## failed to converge. 
-rm(glmer_9)
-```
-
-``` r
-# remove the interaction for S * G by subject
-glmer_10<-glmer(RT~S*G
-                  +(S+G|SubjectNr.)+(1|Item),
-                  data= RTdata,family = Gamma(link=identity))
-```
-
-    ## boundary (singular) fit: see help('isSingular')
-
-``` r
-## singular fit
-rm(glmer_10)
-```
-
-``` r
-# remove the interaction for S * G 
-glmer_11<-glmer(RT~S+G
-                  +(S+G|SubjectNr.)+(1|Item),
-                  data= RTdata,family = Gamma(link=identity))
-```
-
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-    ## Model failed to converge with max|grad| = 0.00459682 (tol = 0.002, component 1)
-
-``` r
-## failed to converge
-rm(glmer_11)
-```
-
-``` r
-# remove by-subject G
-glmer_12<-glmer(RT~S*G
-                  +(S|SubjectNr.)+(1|Item),
-                  data= RTdata,family = Gamma(link=identity))
-```
-
-    ## boundary (singular) fit: see help('isSingular')
-
-``` r
-## failed to converge
-rm(glmer_12)
-```
-
-``` r
-# remove by-subject S
-glmer_13<-glmer(RT~S*G
-                  +(G|SubjectNr.)+(1|Item),
-                  data= RTdata,family = Gamma(link=identity))
-```
-
-``` r
-## failed to converge
-rm(glmer_13)
-```
+    ## failed to converge
+    rm(glmer_13)
 
 ``` r
 # remove by-subject S
@@ -587,44 +477,7 @@ glmer_14<-glmer(RT~S*G
                   data= RTdata,family = Gamma(link=identity))
 ```
 
-``` r
-summary(glmer_14)
-```
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: Gamma  ( identity )
-    ## Formula: RT ~ S * G + (1 | SubjectNr.) + (1 | Item)
-    ##    Data: RTdata
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    124.2    162.3    -55.1    110.2     1713 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.0855 -0.6833 -0.1876  0.4943  4.7007 
-    ## 
-    ## Random effects:
-    ##  Groups     Name        Variance Std.Dev.
-    ##  Item       (Intercept) 0.004514 0.06719 
-    ##  SubjectNr. (Intercept) 0.008297 0.09109 
-    ##  Residual               0.068449 0.26163 
-    ## Number of obs: 1720, groups:  Item, 26; SubjectNr., 19
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  1.12732    0.06856  16.442   <2e-16 ***
-    ## SUn         -0.02720    0.01624  -1.676   0.0938 .  
-    ## GInc         0.02998    0.01677   1.788   0.0738 .  
-    ## SUn:GInc    -0.03370    0.02308  -1.460   0.1443    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##          (Intr) SUn    GInc  
-    ## SUn      -0.122              
-    ## GInc     -0.118  0.504       
-    ## SUn:GInc  0.085 -0.706 -0.726
+    summary(glmer_14)
 
 ``` r
 # remove interaction of two fixed effects
@@ -682,161 +535,14 @@ anova(glmer_15,glmer_14)# p(interaction of G*S)>.05. glmer_15
     ## glmer_15    6 124.29 156.99 -56.143   112.29                     
     ## glmer_14    7 124.16 162.31 -55.077   110.16 2.1318  1     0.1443
 
-``` r
-# plot glmer_15
-plot(glmer_15)
-```
+    # plot glmer_15
+    plot(glmer_15)
 
-![](R_behavioral_project_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
+    # save table to html file
+    tab_model(glmer_15,show.se = TRUE,transform = NULL) 
 
-``` r
-# save table to html file
-tab_model(glmer_15,show.se = TRUE,transform = NULL) 
-```
+#### Summary
 
-<table style="border-collapse:collapse; border:none;">
-<tr>
-<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
- 
-</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
-RT
-</th>
-</tr>
-<tr>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
-Predictors
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-Estimates
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-std. Error
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-CI
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-p
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-(Intercept)
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-1.14
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.07
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-1.00 – 1.27
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>\<0.001</strong>
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-S \[Un\]
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.04
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.01
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.07 – -0.02
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>\<0.001</strong>
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-G \[Inc\]
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.01
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.01
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.01 – 0.03
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.291
-</td>
-</tr>
-<tr>
-<td colspan="5" style="font-weight:bold; text-align:left; padding-top:.8em;">
-Random Effects
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-σ<sup>2</sup>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-0.07
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-τ<sub>00</sub> <sub>Item</sub>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-0.00
-</td>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-τ<sub>00</sub> <sub>SubjectNr.</sub>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-0.01
-</td>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-ICC
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-0.16
-</td>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-N <sub>SubjectNr.</sub>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-19
-</td>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-N <sub>Item</sub>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-26
-</td>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
-Observations
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">
-1720
-</td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">
-0.006 / 0.163
-</td>
-</tr>
-</table>
-
-Short summary: S significantly affects RT.<br/> G does not significantly
-affect RT, despite a descriptive trend. <br/> There is no interaction of
-S and G.
+The factor S exhibits a significant impact on RT. Conversely, despite an
+observable descriptive trend, factor G does not significantly affect RT.
+Furthermore, there is no interaction observed between factors S and G.
