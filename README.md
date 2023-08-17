@@ -1,1 +1,1 @@
-This Python code shows basic analysis steps, including looking into the data types, data statistics, specific parameters,and variable distributions.
+This R markdowm file shows basic analysis steps, including calculating average value, making plots and GLM

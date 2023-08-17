@@ -3,22 +3,25 @@ Behavioral Data
 SYsherley
 latest: 2023-08-16
 
-### 
+This Markdown document includes a process for analyzing a behavioral
+dataset that encompasses speech latencies recorded during a linguistics
+experiment.
 
-This is an R Markdown file. It includes a simplified procedure of
-behavioral data analysis.<br/> The dataset shown in this file includes
-naming latencies extracted from speech voices recorded in a language
-production experiment.<br/> The dataset has been cleaned, removed
-outliers. <br/> We need to calculate the mean naming latencies for each
-condition (4 in total), make violin plots, and develop GLM.
+The analysis process involves calculating the mean reaction time (RT)
+for each condition, visualizing the differences in RT among conditions
+by generating violin plots, and conducting GLM models to explore the
+influence of factors on RT.
 
-### Analysis procedure:
+The operational dataset has undergone cleaning and the removal of
+outliers.
 
-1.  Import libraries
-2.  Load dataset
-3.  Average values
-4.  Visualization
-5.  Generalized Linear Mixed effects Model
+### Analysis process:
+
+1.  Import Libraries
+2.  Load Dataset
+3.  Calculate Averages
+4.  Visualization - Violin Plot
+5.  Generalized Linear Mixed-Effects Models
 
 ``` r
 library(tidyverse)
@@ -183,7 +186,6 @@ library(cowplot)   # save figures in .png file
 library(sjPlot)    # tab_model()
 ```
 
-    ## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!
     ## 
     ## Attaching package: 'sjPlot'
     ## 
@@ -210,7 +212,7 @@ library(sjlabelled)
     ## 
     ##     as_label
 
-### Load dataset
+#### Load dataset
 
 ``` r
 RTdata<-read_excel("RT.xls") 
@@ -280,121 +282,106 @@ tapply(RTdata$RT,RTdata$S, sd)*1000 # SD
 Here, naming latencies in the Rel condition were longer compared to the
 Un condition. The exitmated difference is around 52 ms.
 
-#### Plot
+#### Violin graph
 
-``` r
-# prepare
-RTdata_2<-RTdata # create a new dataframe to plot
-RTdata_2$RT<-RTdata_2$RT*1000 # ms
-RTdata_2$Condition <- factor(RTdata_2$Condition, levels = c("c1","c2","c3","c4"))
+    # prepare
+    RTdata_2<-RTdata # create a new dataframe to plot
+    RTdata_2$RT<-RTdata_2$RT*1000 # ms
+    RTdata_2$Condition <- factor(RTdata_2$Condition, levels = c("c1","c2","c3","c4"))
 
-RTdata_2$S_status<-RTdata_2$S
-RTdata_2$S_status<-as.character(RTdata_2$S_status)
-RTdata_2$S_status[RTdata_2$S_status =="Rel"] <-"S+" # rename
-RTdata_2$S_status[RTdata_2$S_status =="Un"] <-"S-"
-RTdata_2$S_status<-as.factor(RTdata_2$S_status) 
+    RTdata_2$S_status<-RTdata_2$S
+    RTdata_2$S_status<-as.character(RTdata_2$S_status)
+    RTdata_2$S_status[RTdata_2$S_status =="Rel"] <-"S+" # rename
+    RTdata_2$S_status[RTdata_2$S_status =="Un"] <-"S-"
+    RTdata_2$S_status<-as.factor(RTdata_2$S_status) 
 
-RTdata_2$G_status<-RTdata_2$G
-RTdata_2$G_status<-as.character(RTdata_2$G_status)
-RTdata_2$G_status[RTdata_2$G_status =="Con"] <-"G+"
-RTdata_2$G_status[RTdata_2$G_status =="Inc"] <-"G-"
-RTdata_2$G_status<-as.factor(RTdata_2$G_status) 
-```
+    RTdata_2$G_status<-RTdata_2$G
+    RTdata_2$G_status<-as.character(RTdata_2$G_status)
+    RTdata_2$G_status[RTdata_2$G_status =="Con"] <-"G+"
+    RTdata_2$G_status[RTdata_2$G_status =="Inc"] <-"G-"
+    RTdata_2$G_status<-as.factor(RTdata_2$G_status) 
 
-``` r
-levels(RTdata_2$S_status) # should be 2 levels
-```
+    levels(RTdata_2$S_status) # should be 2 levels
+    levels(RTdata_2$G_status)
 
-    ## [1] "S-" "S+"
+    RTdata_2<-RTdata_2 %>%
+      mutate(day = fct_reorder(G_status, RT)) %>%
+      mutate(day = factor(G_status, levels=c("G+", "G-"))) 
 
-``` r
-levels(RTdata_2$G_status)
-```
+    RTdata_2<-RTdata_2 %>%
+      mutate(day = fct_reorder(S_status, RT)) %>%
+      mutate(day = factor(S_status, levels=c("S+", "S-"))) 
 
-    ## [1] "G-" "G+"
+    plotS<-ggplot(RTdata_2, aes(x = S_status,y = RT,
+                                 colour = G_status,fill = G_status))+ 
+      scale_fill_manual(values = c("#FD744699","#ffc425"))+
+      
+      geom_violin(trim = FALSE,alpha = 0.7,position = position_dodge(width = 1)) +
+      scale_color_manual(values = c("#FD744699","#ffc425"))+
+      
+      geom_point(position=position_jitterdodge(dodge.width=1),
+                 colour = "brown",width = 0.8,alpha = 0.5,size = 0.5)+ 
+      
+      geom_boxplot(outlier.shape = NA,alpha=0.2,
+                   size = 0.8,colour = "brown",position = position_dodge(width = 1)) 
 
-    ## Warning in geom_point(position = position_jitterdodge(dodge.width = 1), :
-    ## Ignoring unknown parameters: `width`
+    plotSRT<-plotS+
+      theme(panel.background = element_blank(),
+            panel.border = element_blank(),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank())+
+      theme(legend.position="right")+
+      labs(y= "Naming Latencies (ms)")+
+      scale_y_continuous(limits=c(500,2500), breaks=seq(500,2500,500))+  # only show data > 500 ms
+      
+      theme(axis.title.x=element_blank(),
+            #axis.text.x=element_blank(),
+            axis.ticks.x=element_blank())+
+      
+      theme(axis.title.x = element_text(size=14,family="serif"),
+            axis.title.y = element_text(size=16,family="serif"),
+            axis.text.x = element_text(size=14,family="serif"),
+            legend.title = element_text(size=14,family="serif"),
+            legend.text = element_text(size=14,family="serif"))+
+      
+      theme(axis.text.y = element_text(size = 12,family="serif"))
 
-``` r
-# add significance label
-plotSRT+geom_signif(comparisons = list(c("S+", "S-")), # add label
-            test = wilcox.test, 
-            y_position = c(2350), 
-            size = 0.6, 
-            textsize = 4, 
-            vjust = -0.3, # the distance of text and line
-            tip_length = c(0.02, 0.02), # the length of short line
-            map_signif_level = T,
-            colour='black')
-```
+    # add significance label
+    plotSRT+geom_signif(comparisons = list(c("S+", "S-")), # add label
+                test = wilcox.test, 
+                y_position = c(2350), 
+                size = 0.6, 
+                textsize = 4, 
+                vjust = -0.3, # the distance of text and line
+                tip_length = c(0.02, 0.02), # the length of short line
+                map_signif_level = T,
+                colour='black')
 
-    ## Warning: Removed 5 rows containing non-finite values (`stat_ydensity()`).
-
-    ## Warning: Removed 5 rows containing non-finite values (`stat_boxplot()`).
-
-    ## Warning: Removed 5 rows containing non-finite values (`stat_signif()`).
-
-    ## Warning: Removed 320 rows containing missing values (`geom_violin()`).
-
-    ## Warning: Removed 5 rows containing missing values (`geom_point()`).
-
-![](R_behavioral_project_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 ![RT mean](RT.png)
 
-``` r
-# save
-ggsave("RT.png", 
-       width = 14, height = 9, units = "cm")
-```
+    # save
+    ggsave("RT.png", 
+           width = 14, height = 9, units = "cm")
 
-    ## Warning: Removed 5 rows containing non-finite values (`stat_ydensity()`).
+#### GLMM
 
-    ## Warning: Removed 5 rows containing non-finite values (`stat_boxplot()`).
+    # check normalization
+    ggdensity(RTdata$RT, 
+              main = "Density plot of RT",
+              xlab = "RT") 
 
-    ## Warning: Removed 5 rows containing non-finite values (`stat_signif()`).
-
-    ## Warning: Removed 320 rows containing missing values (`geom_violin()`).
-
-    ## Warning: Removed 5 rows containing missing values (`geom_point()`).
-
-### GLMM
-
-``` r
-# check normalization
-ggdensity(RTdata$RT, 
-          main = "Density plot of RT",
-          xlab = "RT") 
-```
-
-![](R_behavioral_project_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 ![normalization](distribution.png)
 
 Positively skewed
 
-``` r
-# 
-RTdata$Item<-as.factor(RTdata$Item)
-RTdata$G<-as.factor(RTdata$G)
-RTdata$S<-as.factor(RTdata$S)
-```
+    # 
+    RTdata$Item<-as.factor(RTdata$Item)
+    RTdata$G<-as.factor(RTdata$G)
+    RTdata$S<-as.factor(RTdata$S)
 
-``` r
-# contrast coding
-contrasts(RTdata$G) # Con as reference
-```
-
-    ##     Inc
-    ## Con   0
-    ## Inc   1
-
-``` r
-contrasts(RTdata$S) # Rel as reference
-```
-
-    ##     Un
-    ## Rel  0
-    ## Un   1
+    # contrast coding
+    contrasts(RTdata$G) # Con as reference
+    contrasts(RTdata$S) # Rel as reference
 
 ``` r
 # model
@@ -700,7 +687,7 @@ anova(glmer_15,glmer_14)# p(interaction of G*S)>.05. glmer_15
 plot(glmer_15)
 ```
 
-![](R_behavioral_project_files/figure-gfm/unnamed-chunk-46-1.png)<!-- -->
+![](R_behavioral_project_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
 
 ``` r
 # save table to html file
